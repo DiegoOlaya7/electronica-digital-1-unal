@@ -1,11 +1,7 @@
-# filename: Makefile
-# Identificador v para representar los archivos verilog
-v=./wokwi.v
-# Identificador top para representar el top del RTL a visualizar
-top=wokwi
-# Identificador tb para el archivo verilog que contiene el testbench
+
+v=./proyecto.v
+top=proyecto
 tb=./simon_dice_tb.v
-# El identificador "MACRO_SIM" permite ajustar los valores de las diferentes definiciones del diseño
 MACRO_SIM=-DPOS=5
 
 sim:
