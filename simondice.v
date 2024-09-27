@@ -1,6 +1,6 @@
 `default_nettype none
 
-module wokwi (
+module proyecto (//se establecen los input y los output
     input  CLK,
     input  RST,
     input  BTN0,
@@ -37,7 +37,7 @@ module wokwi (
 
 endmodule
 
-
+//modulo de score
 module score (
     input wire clk,
     input wire rst,
@@ -92,7 +92,7 @@ module score (
 endmodule
 
 
-module play (
+module play ( //modo de juego
     input wire clk,
     input wire rst,
     input wire [15:0] ticks_per_milli,
@@ -120,7 +120,7 @@ module play (
 
 endmodule
 
-module simon (
+module simon ( //modulo de simon dice
     input wire clk,
     input wire rst,
     input wire [15:0] ticks_per_milli,
@@ -227,7 +227,7 @@ module simon (
         StatePowerOn: begin
           led <= 4'b1111;
           led[millis_counter[9:8]] <= 1'b0;
-          // Wait until the user presses some button - the delay will seed the random sequence
+          //esto espera hasta qu el jugador presione algun boton para empezar la secuencia random
           if (btn != 0) begin
             state <= StateInit;
             led <= 4'b0000;
@@ -324,7 +324,7 @@ module simon (
           led <= millis_counter[7] ? 4'b1111 : 4'b0000;
 
           if (tone_sequence_counter == 4) begin
-            // trembling sound
+            // sonidos
             sound_freq <= GAMEOVER_TONES[3] - 16 + {5'b0, millis_counter[4:0]};
             if (millis_counter == 1000) begin
               tone_sequence_counter <= 7;
