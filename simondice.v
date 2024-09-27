@@ -1,6 +1,7 @@
 `default_nettype none
 
-module proyecto (//se establecen los input y los output
+module proyecto (//se establecen los input y los output, inicializar variables y configurar el sistema.
+
     input  CLK,
     input  RST,
     input  BTN0,
@@ -37,7 +38,11 @@ module proyecto (//se establecen los input y los output
 
 endmodule
 
-//modulo de score
+//modulo de score//Estado: Power On:
+        // Encender los LEDs.
+        //Esperar a que el usuario presione un botón.
+       // Si se presiona un botón, ir a Estado: Init.
+
 module score (
     input wire clk,
     input wire rst,
@@ -69,7 +74,11 @@ module score (
       end
     end
 
-    case(active_digit)
+    case(active_digit)// Estado: Init:
+        //Inicializar secuencia (secuencia de longitud 1).
+       // Esperar un breve tiempo (milisegundos).
+        //Ir a Estado: Play.
+
       1'b0: digits <= invert ? 2'b10 : 2'b01;
       1'b1: digits <= invert ? 2'b01 : 2'b10;
     endcase
@@ -92,7 +101,12 @@ module score (
 endmodule
 
 
-module play ( //modo de juego
+module play ( //modo de juego   //Estado: Play:
+        //Encender el LED correspondiente a la secuencia actual.
+        //Generar el sonido correspondiente.
+        //Esperar un tiempo (milisegundos).
+        //Ir a Estado: Play Wait.
+
     input wire clk,
     input wire rst,
     input wire [15:0] ticks_per_milli,
@@ -223,7 +237,12 @@ module simon ( //modulo de simon dice
         millis_counter <= millis_counter + 1;
       end
 
-      case (state)
+      case (state) //   Estado: Play Wait:
+        //Apagar LED y sonido.
+        //Comprobar si se ha mostrado toda la secuencia:
+            //Sí: Ir a Estado: User Wait.
+            //No: Regresar a Estado: Play.
+
         StatePowerOn: begin
           led <= 4'b1111;
           led[millis_counter[9:8]] <= 1'b0;
@@ -259,7 +278,10 @@ module simon ( //modulo de simon dice
           end
           if (millis_counter == 400) begin
             if (seq_counter + 1 == seq_length) begin
-              state <= StateUserWait;
+              state <= StateUserWait; // Estado: User Wait:
+       // Esperar a que el usuario presione un botón.
+       // Al recibir entrada, ir a Estado: User Input.
+
               millis_counter <= 0;
               seq_counter <= 0;
             end else begin
@@ -272,7 +294,16 @@ module simon ( //modulo de simon dice
           led <= 0;
           millis_counter <= 0;
           if (btn != 0) begin
-            state <= StateUserInput;
+            state <= StateUserInput;     //Estado: User Input:
+        //Encender el LED correspondiente al botón presionado.
+        //Generar el sonido correspondiente.
+        //Esperar un tiempo (milisegundos).
+        //Comparar la entrada del usuario con la secuencia:
+            //Correcto:
+                //Si es la última entrada: Ir a Estado: Next Level.
+                //Si no: Regresar a Estado: User Wait.
+            //Incorrecto: Ir a Estado: Game Over.
+
             seq[seq_length] <= next_random;
             case (btn)
               4'b0001: user_input <= 0;
@@ -293,7 +324,12 @@ module simon ( //modulo de simon dice
               if (seq_counter + 1 == seq_length) begin
                 millis_counter <= 0;
                 seq_length <= seq_length + 1;
-                state <= StateNextLevel;
+                state <= StateNextLevel;  //    Estado: Next Level:
+        //Incrementar la longitud de la secuencia.
+        //Reproducir sonido de éxito.
+        //Esperar tiempo.
+        //Ir a Estado: Play.
+
                 score_inc <= 1;
               end else begin
                 seq_counter <= seq_counter + 1;
@@ -320,7 +356,12 @@ module simon ( //modulo de simon dice
             millis_counter <= 0;
           end
         end
-        StateGameOver: begin
+        StateGameOver: begin     //Estado: Game Over:
+        //Encender LEDs de manera intermitente.
+        //Reproducir tonos de Game Over.
+        //Esperar a que el usuario presione un botón para reiniciar.
+        //Ir a Estado: Init.
+
           led <= millis_counter[7] ? 4'b1111 : 4'b0000;
 
           if (tone_sequence_counter == 4) begin
@@ -351,4 +392,6 @@ module simon ( //modulo de simon dice
   end
 
 endmodule
-  
+  //    Fin:
+        //Terminar o reiniciar el juego.
+        // En cada estado, puedes incluir detalles sobre la configuración de las variables y las acciones específicas que se realizan.
