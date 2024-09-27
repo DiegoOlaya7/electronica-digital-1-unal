@@ -598,9 +598,80 @@ se entendio todas las fases preeliminares de programacion, como el test bench, m
 se enetiendo la logica detras de los pulsadores y actuadores y el tipo de proyectos que se pueden realizar para ayuda de la sociedad.
 
 ANEXOS\\
+aca vamos a gregar otros archivos necesarios para el proyecto y su funcionamiento:
+
+makefile:
+```verilog
+
+v=./proyecto.v
+top=proyecto
+tb=./simon_dice_tb.v
+MACRO_SIM=-DPOS=5
+
+sim:
+	# 1. Crear el archivo .vvp ejecutable desde iverilog
+	iverilog $(MACRO_SIM) -o $(tb).vvp $(tb)
+	# 2. Ejecuta el archivo .vvp para mostrar resultados
+	vvp $(tb).vvp -dumpfile=$(top)_tb.vcd
+
+wave:
+	gtkwave $(top)_tb.vcd $(top).gtkw
+
+rtl:
+	# 1. Síntesis del diseño, si la sintaxis es correcta, se genera un archivo json que representa el diseño
+	yosys $(MACRO_SIM) -p 'read_verilog $v; prep -top $(top); hierarchy -check; proc; write_json $(top).json'
+	# 2. Comando para generación del RTL en formato SVG (vectorial)
+	netlistsvg $(top).json -o $(top).svg
+	# 3. Visualizar el RTL con el visor de imagenes eog
+	eog $(top).svg
+
+clean:
+	rm -f *.vvp *.json *.vcd *.json *.pnr *.bin
+
+syn:
+	yosys -p "synth_ice40 -top $(top) -json $(top).json" $(top).v 
+pnr:
+	nextpnr-ice40 --hx4k --package tq144 --json $(top).json --pcf $(top).pcf --asc $(top).pnr 
+	icepack proyecto.pnr proyecto.bin 
+	
+pack:
+	icepack $(top).pnr $(top).bin 
+	
+config:
+	stty -F /dev/ttyACM0 raw
+	cat $(top).bin > /dev/ttyACM0
+
+```
+tambien a continuacion se encuentra el codigo del pcf
+
+set_io CLK 60
+set_io RST 49
+set_io BTN0 104
+set_io BTN1 106
+set_io BTN2 102
+set_io BTN3 105
+set_io LED0 23
+set_io LED1 25
+set_io LED2 22
+set_io LED3 20
+set_io SND 136
+set_io SEG_A 1
+set_io SEG_B 144
+set_io SEG_C 8
+set_io SEG_D 3
+set_io SEG_E 7
+set_io SEG_F 143
+set_io SEG_G 4
+set_io DIG1 134
+set_io DIG2 138
+
 
 
 REFERENCIAS\\
+codigo de referencia: https://wokwi.com/projects/371755521090136065
+uso 7 segementos: http://edupython.blogspot.com/2015/06/termometro-digital.html
+Debounce botones: https://electronics.stackexchange.com/questions/505911/debounce-circuit-design-in-verilog
+uso verilog: https://github.com/johnnycubides/digital-electronic-1-101/tree/main
 
 
 
