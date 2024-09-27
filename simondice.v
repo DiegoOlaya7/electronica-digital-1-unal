@@ -2,18 +2,18 @@
 
 module proyecto (//se establecen los input y los output, inicializar variables y configurar el sistema.
 
-    input  CLK,
-    input  RST,
-    input  BTN0,
+    input  CLK, //clock
+    input  RST, //reset
+    input  BTN0, //botones
     input  BTN1,
     input  BTN2,
     input  BTN3,
-    output LED0,
+    output LED0,//leds
     output LED1,
     output LED2,
     output LED3,
-    output SND,
-    output SEG_A,
+    output SND,//sonido
+    output SEG_A,//segmentos del display
     output SEG_B,
     output SEG_C,
     output SEG_D,
