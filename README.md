@@ -15,6 +15,7 @@ CONFIGURACION PIN 7 SEGMENTOS\\
 DIAGRAMA DE FLUJO\\
 La siguiente imagen muestra como es el diagrama de flujo de proyecto realizado:\\
 ![](./diagrama%20de%20flujo.jpeg)\\
+
 CODIGO DE PRUEBA\\
 
 SIMULACION\\
